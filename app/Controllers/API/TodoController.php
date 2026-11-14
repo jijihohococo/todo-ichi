@@ -19,7 +19,7 @@ class TodoController extends BaseController
     public function index()
     {
         return jsonResponse([
-            'todos' => Todo::get()
+            'todos' => Todo::orderBy('id', 'desc')->get()
         ]);
     }
 
