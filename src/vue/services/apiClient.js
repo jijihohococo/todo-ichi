@@ -50,3 +50,16 @@ export async function apiPost(url, body) {
     body: JSON.stringify(body),
   });
 }
+
+export async function apiPut(url, body) {
+  return apiRequest(url, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function apiDelete(url) {
+  return apiRequest(url, {
+    method: "DELETE",
+  });
+}

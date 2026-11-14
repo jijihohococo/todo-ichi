@@ -12,6 +12,9 @@ function api(Route $route): void
         function () {
             $this->get('/todos', 'App\Controllers\API\TodoController@index');
             $this->get('/todos/{id}', 'App\Controllers\API\TodoController@show');
+            $this->post('/todos', 'App\Controllers\API\TodoController@create');
+            $this->put('/todos/{id}', 'App\Controllers\API\TodoController@update');
+            $this->delete('/todos/{id}', 'App\Controllers\API\TodoController@delete');
         }
     );
 }
