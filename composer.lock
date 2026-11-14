@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "jijihohococo/ichi-orm",
-            "version": "3.4.1",
+            "version": "3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jijihohococo/ichi-orm.git",
-                "reference": "3239d45bcd83762737a1054e80372046ba9e0a82"
+                "reference": "3ea1e7c06146112563fa3c05781c2ac02191b22e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jijihohococo/ichi-orm/zipball/3239d45bcd83762737a1054e80372046ba9e0a82",
-                "reference": "3239d45bcd83762737a1054e80372046ba9e0a82",
+                "url": "https://api.github.com/repos/jijihohococo/ichi-orm/zipball/3ea1e7c06146112563fa3c05781c2ac02191b22e",
+                "reference": "3ea1e7c06146112563fa3c05781c2ac02191b22e",
                 "shasum": ""
             },
             "require": {
@@ -52,9 +52,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jijihohococo/ichi-orm/issues",
-                "source": "https://github.com/jijihohococo/ichi-orm/tree/3.4.1"
+                "source": "https://github.com/jijihohococo/ichi-orm/tree/3.5"
             },
-            "time": "2026-10-31T23:39:51+00:00"
+            "time": "2026-11-14T14:57:26+00:00"
         },
         {
             "name": "jijihohococo/ichi-route",

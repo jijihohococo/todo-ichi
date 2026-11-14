@@ -19,7 +19,7 @@ class TodoController extends BaseController
     public function index()
     {
         return jsonResponse([
-            'todos' => Todo::paginate()
+            'todos' => Todo::get()
         ]);
     }
 
@@ -42,7 +42,11 @@ class TodoController extends BaseController
             ], 422);
         }
 
-        return $this->todo->create($requestData);
+        return $this->todo->create([
+            'title' => $requestData['title'],
+            'description' => $requestData['description'] ?? null,
+            'is_completed' => false
+        ]);
     }
 
     public function update($id)

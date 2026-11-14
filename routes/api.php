@@ -10,11 +10,11 @@ function api(Route $route): void
             'middleware' => 'JiJiHoHoCoCo\IchiRoute\Middleware\APIMiddleware'
         ],
         function () {
-            $this->get('/todos', 'App\Controllers\API\TodoController@index');
-            $this->get('/todos/{id}', 'App\Controllers\API\TodoController@show');
-            $this->post('/todos', 'App\Controllers\API\TodoController@create');
-            $this->put('/todos/{id}', 'App\Controllers\API\TodoController@update');
-            $this->delete('/todos/{id}', 'App\Controllers\API\TodoController@delete');
+            $this->get('/todos', 'API\TodoController@index');
+            $this->get('/todos/{id}', 'API\TodoController@show');
+            $this->post('/todos', 'API\TodoController@create');
+            $this->put('/todos/{id}', 'API\TodoController@update');
+            $this->delete('/todos/{id}', 'API\TodoController@delete');
         }
     );
 }
