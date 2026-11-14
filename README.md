@@ -1,220 +1,294 @@
-# ICHI PHP FRAMEWORK
+# Todo Ichi
 
-ICHI PHP FRAMEWORK is a fast and secure MVC PHP framework.
+A simple task management application built with PHP, Vue 3, and MySQL.
 
-## License
+## Features
 
-This framework is open source under the [MIT license](LICENSE.md).
+- Create todos.
+- View all todos.
+- Edit existing todos.
+- Delete todos.
+- Mark todos as completed or active.
+- Search and filter todos.
+- View todo statistics.
 
-## Table of Contents
+## Technology Stack
 
-- [ICHI PHP FRAMEWORK](#ichi-php-framework)
-	- [License](#license)
-	- [Table of Contents](#table-of-contents)
-	- [Installation](#installation)
-	- [Setup](#setup)
-	- [Using](#using)
-		- [Route](#route)
-		- [Middleware](#middleware)
-		- [Model](#model)
-		- [Controller](#controller)
-		- [View](#view)
-		- [Validation](#validation)
+### Backend
+- PHP 7.3+
+- MySQL
+- Composer
+- IchiRoute
+- IchiORM
+- IchiValidation
+
+### Frontend
+- Vue 3
+- Vue Router
+- Vite
+- JavaScript
+- CSS
+
+## Requirements
+
+Before setting up the project, make sure you have installed:
+
+| Software | Requirement |
+|---|---|
+| PHP | 7.3 or later |
+| Composer | Latest stable version |
+| MySQL | MySQL server |
+| Node.js | LTS version recommended |
+| npm | Installed with Node.js |
+| Git | Latest stable version |
+
+You can verify your installations with:
+
+```bash
+php -v
+composer --version
+mysql --version
+node -v
+npm -v
+git --version
+```
 
 ## Installation
 
-```php
-composer create-project jijihohococo/ichi your_project
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/jijihohococo/todo-ichi.git
 ```
 
-## Setup
+Enter the project directory:
 
-First, you must create a `.env` file in your project folder. Then declare your actual database name, database username, and password in that file.
+```bash
+cd todo-ichi
+```
 
-<b>You can see the required format in `.env.example` under your project folder.</b>
+### 2. Install PHP dependencies
 
-<i>In your `.env` file</i>
+Run Composer:
 
-```txt
+```bash
+composer install
+```
+
+### 3. Install frontend dependencies
+
+Run:
+
+```bash
+npm install
+```
+
+### 4. Create the database
+
+Create a MySQL database for the application.
+
+For example:
+
+```sql
+CREATE DATABASE todo_ichi
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+```
+
+Select the database:
+
+```sql
+USE todo_ichi;
+```
+
+Create the `todos` table:
+
+```sql
+CREATE TABLE `todos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `is_completed` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+```
+
+### 5. Configure environment variables
+
+Copy `.env.example` to `.env`.
+
+**Linux / macOS / WSL:**
+
+```bash
+cp .env.example .env
+```
+
+**Windows PowerShell:**
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Open `.env` and configure your database connection:
+
+```env
+APP_ENV=development
+
+VITE_PORT=5173
+SERVER_URL=
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=your_database_name
-DB_USERNAME=your_database_user_name
-DB_PASSWORD=your_database_password
+DB_DATABASE=todo_ichi
+DB_USERNAME=root
+DB_PASSWORD=
 ```
 
-You can run the app from the public path:
+Update the database values according to your MySQL configuration.
 
-```txt
-your_project/public > php -S localhost:8000
+> **Note:** The current database configuration in `app/Kernel.php` does not pass `DB_PORT` to the database connector. The default MySQL port (3306) is therefore assumed unless the connection configuration is updated.
+
+Never commit your actual `.env` file or database credentials.
+
+## Running the Application
+
+### Development Mode
+
+You need two terminal sessions.
+
+**Terminal 1: Start the Vite development server**
+
+```bash
+npm run dev
 ```
 
-## Using
+Vite runs on:
 
-### Route
+```text
+http://localhost:5173
+```
 
-You can add routes in the `web` function of `routes/web.php`.
+**Terminal 2: Start the PHP application**
 
-If you want to add another route file, create a new file under the `routes` folder.
-Then add a new function similar to `web.php`.
+From the project root, run:
 
-```php
-function new_routes($route)
+```bash
+php -S localhost:8000
+```
+
+This assumes the project root contains the PHP application entry point (`index.php`).
+
+Open the application in your browser:
+
+```text
+http://localhost:8000
+```
+
+### Production Build
+
+Build the frontend assets:
+
+```bash
+npm run build
+```
+
+The production assets are generated in:
+
+```text
+public/vue/
+```
+
+The build produces:
+
+- `public/vue/app.js`
+- `public/vue/main.css`
+
+Start the PHP application using your configured PHP web server and open its URL in your browser.
+
+## Available API Endpoints
+
+The application exposes the following REST API endpoints:
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/todos` | Retrieve all todos |
+| GET | `/api/todos/{id}` | Retrieve a todo |
+| POST | `/api/todos` | Create a todo |
+| PUT | `/api/todos/{id}` | Update a todo |
+| DELETE | `/api/todos/{id}` | Delete a todo |
+
+### Example: Create a Todo
+
+**Request**
+
+```http
+POST /api/todos
+Content-Type: application/json
+```
+
+```json
 {
-
+  "title": "Learn Vue 3",
+  "description": "Practice Vue Composition API"
 }
 ```
 
-Then include your new route file in `app/Kernel.php`:
+The backend initializes `is_completed` to `false` when creating a todo.
 
-```php
-namespace App;
+## Project Structure
 
-use JiJiHoHoCoCo\IchiRoute\Router\Route;
-
-require_once __DIR__ . '/../routes/new_routes.php';
-
-class Kernel
-{
-	public function run()
-	{
-		$route = new Route;
-		new_routes($route);
-		$route->run();
-	}
-}
+```text
+todo-ichi/
+├── app/
+│   ├── Controllers/
+│   │   ├── API/
+│   │   │   └── TodoController.php
+│   │   └── PageController.php
+│   ├── Models/
+│   │   └── Todo.php
+│   ├── Repositories/
+│   │   ├── TodoRepository.php
+│   │   └── TodoRepositoryInterface.php
+│   └── Kernel.php
+├── resources/
+│   └── views/
+│       └── index.php
+├── routes/
+│   └── web.php
+├── src/
+│   └── vue/
+│       ├── components/
+│       ├── router/
+│       ├── services/
+│       ├── styles/
+│       ├── utils/
+│       ├── views/
+│       ├── App.vue
+│       └── main.js
+├── public/
+│   └── vue/
+├── .env.example
+├── composer.json
+├── package.json
+├── vite.config.js
+└── README.md
 ```
 
-<b>The code above highlights what is needed to add a new route file.</b>
+## Development Commands
 
-You can use <a href="https://github.com/jijihohococo/ichi-route/blob/master/README.md">this documentation</a> for route functions in detail.
+| Command | Description |
+|---|---|
+| `composer install` | Install PHP dependencies |
+| `npm install` | Install frontend dependencies |
+| `npm run dev` | Start Vite development server |
+| `npm run build` | Build production frontend assets |
+| `php -S localhost:8000` | Start PHP development server |
 
-### Middleware
+## License
 
-You can create middleware for routes from the command line.
-
-```php
-php ichi make:middleware NewMiddleware
-```
-
-The middleware class will be created under the `app/Middleware` folder.
-
-You can use <a href="https://github.com/jijihohococo/ichi-route#middleware">this documentation</a> for middleware functions in detail.
-
-### Model
-
-You can add another database connection in `app/Kernel.php`, as shown in <a href="https://github.com/jijihohococo/ichi-orm/blob/master/README.md#set-up-database-connection">this documentation</a>.
-
-You can create a model from the command line.
-
-```php
-php ichi make:model NewModel
-```
-
-The model class will be created under the `app/Models` folder.
-
-<i>Example model</i>
-
-```php
-namespace App\Models;
-
-use JiJiHoHoCoCo\IchiORM\Database\Model;
-
-class NewModel extends Model
-{
-	public $id , $name , $created_at , $updated_at , $deleted_at ;
-}
-```
-
-You can use <a href="https://github.com/jijihohococo/ichi-orm/blob/master/README.md">this documentation</a> for model usage details.
-
-### Controller
-
-You can create a controller from the command line.
-
-```php
-php ichi make:controller NewController
-```
-
-The controller class will be created under the `app/Controllers` folder.
-
-For more details, use <a href="https://github.com/jijihohococo/ichi-route/blob/master/README.md#creating-controller">this documentation</a>.
-
-### View
-
-You can create a view component class from the command line.
-
-```php
-php ichi make:component ViewComponent
-```
-
-The view component class will be created under the `app/Components` folder.
-
-You can return a view in a route callback or in a controller method.
-
-<i>Without controller</i>
-
-```php
-$route->get('/welcome',function(){
-	return view('welcome.php');
-});
-```
-
-<i>With controller</i>
-
-```php
-$route->get('/welcome','HomeController@welcome');
-```
-
-```php
-namespace App\Controllers;
-
-class HomeController
-{
-	public function welcome()
-	{
-		return view('welcome.php');
-	}
-}
-```
-
-You must create view PHP files under the `resources/views` folder.
-
-For more details, use <a href="https://github.com/jijihohococo/ichi-template/blob/master/README.md">this documentation</a>.
-
-### Validation
-
-You can validate input data in your controller class.
-
-```php
-namespace App\Controllers;
-
-use JiJiHoHoCoCo\IchiValidation\Validator;
-
-class TestController
-{
-	public function test()
-	{
-		$validator = new Validator();
-		if(!$validator->validate($_REQUEST,[
-			'name' => 'required' ,
-			'age' => 'required|integer' ,
-			'email' => ['required','email']
-		])) {
-			setErrors($validator->getErrors());
-			return view('test.php');
-		}
-	}
-}
-```
-
-You can display validation error messages in your view PHP file:
-
-```php
-<?php if(isset($errors['name'])): ?>
-<?php echo $errors['name']; ?>
-<?php endif; ?>
-```
-
-For more details, use <a href="https://github.com/jijihohococo/ichi-validation/blob/master/README.md">this documentation</a>.
+See the repository for license information.
