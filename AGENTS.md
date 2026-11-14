@@ -228,13 +228,18 @@ Do not assume that database migrations, table creation, authentication, authoriz
 
 Before implementing database changes, inspect the actual database configuration and existing schema if available.
 
-## 6. Database and Environment Configuration
+## 6. Environment and Database Configuration
 
-Database configuration is loaded from `.env`.
+Application configuration is supplied through the root `.env` file. Keep `.env` out of version control and maintain `.env.example` as the safe template for required configuration.
 
-The existing environment variables are:
+The current intended environment configuration is:
 
 ```env
+APP_ENV=production
+
+VITE_PORT=5173
+SERVER_URL=http://localhost
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -243,14 +248,25 @@ DB_USERNAME=root
 DB_PASSWORD=password
 ```
 
+Variable guidance:
+
+- `APP_ENV`: Application environment, currently set to `production`.
+- `VITE_PORT`: Vite development-server port.
+- `SERVER_URL`: Base URL for the application server.
+- `DB_CONNECTION`: Selected IchiORM connection name; currently `mysql`.
+- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`: MySQL connection settings.
+
 Important rules:
 
 - Never commit `.env`.
-- Never expose database credentials.
-- Update `.env.example` when introducing new required environment variables.
-- Do not hardcode credentials in application code.
-- Preserve the existing IchiORM connection setup.
-- Do not modify database connection behavior without checking how `app/Kernel.php` initializes the connector.
+- Never expose real database credentials or copy production secrets into documentation, examples, logs, or source code.
+- Treat values shown in `.env.example` as placeholders, not real credentials.
+- Update `.env.example` whenever required environment variables are added, removed, or renamed.
+- Do not hardcode environment-specific values in application code.
+- Preserve the existing IchiORM connection setup and inspect the installed IchiORM API before changing it.
+- Check that each environment variable is actually read by the application before relying on it.
+- The current `app/Kernel.php` reads `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`, then selects the connection using `DB_CONNECTION`. It does not currently pass `DB_PORT` to `createConnection()`. Do not claim that a non-default port is supported until this is updated and verified.
+- Do not assume that `APP_ENV`, `VITE_PORT`, or `SERVER_URL` affect runtime behavior until their usage is confirmed in the application or build configuration.
 
 Use `composer.lock` to understand the currently installed dependency versions.
 
