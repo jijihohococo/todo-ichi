@@ -89,8 +89,6 @@ function extractTodos(response) {
   const result = response.data?.todos;
 
   if (Array.isArray(result)) return result;
-  if (Array.isArray(result?.data)) return result.data;
-  if (Array.isArray(result?.items)) return result.items;
 
   return [];
 }
