@@ -2,219 +2,153 @@
 
 ## 1. Project Overview
 
-This repository is `jijihohococo/todo-ichi`.
+**todo-ichi** is a task management application built with a PHP MVC backend and a Vue 3 frontend.
 
-It is a PHP MVC application built using the Ichi PHP framework and its associated packages.
+The application provides:
+- Displaying todo items.
+- Creating todo items.
+- Editing todo items.
+- Deleting todo items.
+- Marking todo items as completed or active.
+- Searching and filtering todo items.
 
-The application is intended to become a TODO management application.
+The backend exposes a JSON REST API, while the frontend communicates with it through the Fetch API.
 
-**Current implementation status:**
-- PHP MVC application bootstrap is in place.
-- Database connection is configured through environment variables.
-- Web and API routes are registered.
-- A `Todo` model exists.
-- Read-only TODO API endpoints exist.
-- The default homepage is still a framework welcome page.
-- Full TODO management functionality has not yet been implemented.
+Repository: https://github.com/jijihohococo/todo-ichi
 
-Do not assume that functionality exists just because it is a typical feature of a TODO application.
+The primary development branch is `main`.
 
 ## 2. Technology Stack
 
-Use the existing technology stack:
+### Backend
+- PHP 7.3 or later.
+- Ichi ecosystem, including IchiRoute, IchiORM, and IchiValidation.
+- MySQL.
+- Composer.
 
-- PHP (maintain PHP 7.3 compatibility unless the project explicitly changes its minimum version).
-- Composer for dependency management.
-- Ichi PHP framework packages:
-  - `jijihohococo/ichi-route`
-  - `jijihohococo/ichi-template`
-  - `jijihohococo/ichi-orm`
-  - `jijihohococo/php-env`
-  - `jijihohococo/ichi-validation`
-- MySQL as the currently configured database connection.
-- Apache `.htaccess` for URL rewriting.
+### Frontend
+- Vue 3 Composition API.
+- Vue Router.
+- Vite.
+- JavaScript.
+- Native Fetch API.
+- CSS.
 
-Do not introduce another framework or ORM without an explicit requirement.
-
-## 3. Project Structure
-
-Follow the existing directory structure.
+## 3. Repository Structure
 
 ```text
-app/
-├── Controllers/
-│   └── API/
-│       └── TodoController.php
-├── Models/
-│   └── Todo.php
-├── Kernel.php
-└── helpers.php
-
-public/
-├── .htaccess
-└── index.php
-
-resources/
-└── views/
-    └── index.php
-
-routes/
-├── api.php
-└── web.php
-
-.env.example
-.gitignore
-composer.json
-composer.lock
-ichi
-README.md
-LICENSE.md
+todo-ichi/
+├── app/
+│   ├── Controllers/
+│   │   ├── API/
+│   │   │   └── TodoController.php
+│   │   └── PageController.php
+│   ├── Models/
+│   │   └── Todo.php
+│   ├── Repositories/
+│   │   ├── TodoRepository.php
+│   │   └── TodoRepositoryInterface.php
+│   └── Kernel.php
+├── resources/
+│   └── views/
+│       └── index.php
+├── routes/
+│   └── web.php
+├── src/
+│   └── vue/
+│       ├── components/
+│       │   ├── TodoItem.vue
+│       │   ├── TodoList.vue
+│       │   ├── TodoModal.vue
+│       │   ├── TodoStats.vue
+│       │   ├── TodoTable.vue
+│       │   └── TodoToolbar.vue
+│       ├── router/
+│       │   └── index.js
+│       ├── services/
+│       │   ├── apiClient.js
+│       │   └── todoService.js
+│       ├── styles/
+│       │   └── app.css
+│       ├── utils/
+│       │   └── todoUtils.js
+│       ├── views/
+│       │   └── DashboardView.vue
+│       ├── App.vue
+│       └── main.js
+├── public/
+│   └── vue/
+├── .env.example
+├── composer.json
+├── package.json
+└── vite.config.js
 ```
 
-Responsibilities:
+Follow the existing directory structure when adding new features. Avoid placing unrelated responsibilities in existing files.
 
-- `app/Controllers/`: Application controllers.
-- `app/Controllers/API/`: API controllers.
-- `app/Models/`: Database models.
-- `app/Kernel.php`: Application initialization, database connection, view configuration, and route registration.
-- `public/index.php`: Application entry point.
-- `public/.htaccess`: Apache URL rewriting.
-- `resources/views/`: PHP view templates.
-- `routes/web.php`: Browser-facing routes.
-- `routes/api.php`: API routes.
-- `ichi`: Command-line entry point for Ichi commands.
-- `composer.json`: Project dependencies and autoload configuration.
+## 4. Backend Architecture and Conventions
 
-Do not move files or reorganize directories unnecessarily.
+### 4.1 Controllers
 
-## 4. Coding Conventions
+Controllers handle HTTP requests and coordinate application logic.
 
-### PHP
+API controllers should:
+- Receive and validate request data.
+- Delegate database operations to repositories when appropriate.
+- Return JSON responses.
+- Use suitable HTTP status codes.
+- Avoid duplicating database operations already handled by repositories.
 
-- Use PHP.
-- Follow the existing PSR-4 namespace structure.
-- Use `App\` as the application namespace.
-- Use `App\Controllers` for controllers.
-- Use `App\Controllers\API` for API controllers.
-- Use `App\Models` for models.
-- Use four spaces for indentation, following the existing application code.
-- Use clear and descriptive class, method, and variable names.
-- Keep methods focused on a single responsibility.
-- Add return types where appropriate and compatible with the project's supported PHP version.
-- Avoid unnecessary abstractions and duplicated logic.
+Current API controller:
 
-Example controller:
+`app/Controllers/API/TodoController.php`
 
-```php
-namespace App\Controllers\API;
+The controller provides:
+- `index()` — retrieve all todos, ordered by descending ID.
+- `show($id)` — retrieve a todo by ID.
+- `create()` — validate and create a todo.
+- `update($id)` — validate and update a todo.
+- `delete($id)` — delete a todo.
 
-use JiJiHoHoCoCo\IchiRoute\Controller\BaseController;
+Creation initializes `is_completed` to `false`.
 
-class ExampleController extends BaseController
-{
-    public function index()
-    {
-        // Implementation
-    }
-}
-```
+### 4.2 Repositories
 
-### Models
+Repositories encapsulate data operations.
 
-Application models should extend:
+Current repository:
 
-```php
-JiJiHoHoCoCo\IchiORM\Database\Model
-```
+`app/Repositories/TodoRepository.php`
 
-Example:
+Interface:
 
-```php
-namespace App\Models;
+`app/Repositories/TodoRepositoryInterface.php`
 
-use JiJiHoHoCoCo\IchiORM\Database\Model;
+The repository interface defines:
+- `create(array $attribute)`
+- `update(int $id, array $attribute)`
+- `delete(int $id)`
 
-class Todo extends Model
-{
-    public $id;
-    public $title;
-    public $description;
-    public $is_completed;
-    public $created_at;
-    public $updated_at;
-}
-```
+When adding repository operations:
+- Keep the implementation consistent with the interface.
+- Handle missing records appropriately.
+- Return consistent JSON responses.
+- Use appropriate HTTP status codes.
+- Avoid putting presentation or frontend logic in repositories.
 
-Follow the existing model conventions. Do not introduce another database abstraction layer.
+### 4.3 Models
 
-### Routes
+Models represent database entities.
 
-Register browser routes in `routes/web.php`.
+Current model:
 
-Register API routes in `routes/api.php`.
+`app/Models/Todo.php`
 
-Both route files expose functions that receive the existing `Route` instance.
+The Todo model extends:
 
-Example:
+`JiJiHoHoCoCo\IchiORM\Database\Model`
 
-```php
-function api(Route $route): void
-{
-    // Register API routes here.
-}
-```
-
-Use the existing IchiRoute APIs and middleware conventions.
-
-Do not create a second router or bypass the application's route registration.
-
-### Controllers and Responses
-
-API controllers should extend the existing `BaseController` when appropriate.
-
-Use the existing `jsonResponse()` helper for JSON API responses.
-
-Follow the existing response structure unless an explicit API contract change is requested.
-
-Current response examples:
-
-```php
-return jsonResponse([
-    'todos' => Todo::paginate()
-]);
-```
-
-```php
-return jsonResponse([
-    'todo' => Todo::find($id)
-]);
-```
-
-Avoid changing existing response keys without considering API compatibility.
-
-### Views
-
-Store PHP view files in:
-
-```text
-resources/views/
-```
-
-Use the existing IchiTemplate view functionality.
-
-Keep application presentation separate from database and business logic.
-
-## 5. Current Application Behavior
-
-The current API routes are:
-
-| Method | Endpoint | Controller |
-|---|---|---|
-| GET | `/api/todos` | `TodoController@index` |
-| GET | `/api/todos/{id}` | `TodoController@show` |
-
-The current `Todo` model contains:
-
+Current todo fields include:
 - `id`
 - `title`
 - `description`
@@ -222,181 +156,472 @@ The current `Todo` model contains:
 - `created_at`
 - `updated_at`
 
-Treat these as the existing model properties.
+Use the existing IchiORM conventions for database operations.
 
-Do not assume that database migrations, table creation, authentication, authorization, or additional CRUD endpoints already exist.
+### 4.4 Validation
 
-Before implementing database changes, inspect the actual database configuration and existing schema if available.
+Use IchiValidation for request validation.
 
-## 6. Environment and Database Configuration
+Current todo validation rules include:
+- `title`: required and string.
+- `description`: string.
 
-Application configuration is supplied through the root `.env` file. Keep `.env` out of version control and maintain `.env.example` as the safe template for required configuration.
+Validation errors should return HTTP 422 with a JSON response containing a message and validation errors.
 
-The current intended environment configuration is:
+Do not trust frontend validation alone. Validate all incoming API data on the backend.
+
+### 4.5 Routes
+
+Routes are defined in:
+
+`routes/web.php`
+
+Current routes:
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/` | Render application page |
+| GET | `/api/todos` | Retrieve all todos |
+| GET | `/api/todos/{id}` | Retrieve one todo |
+| POST | `/api/todos` | Create a todo |
+| PUT | `/api/todos/{id}` | Update a todo |
+| DELETE | `/api/todos/{id}` | Delete a todo |
+
+API routes use the IchiRoute API middleware.
+
+When adding routes, follow the existing route grouping and middleware conventions.
+
+### 4.6 Kernel and Database Configuration
+
+Application initialization and database configuration are handled by:
+
+`app/Kernel.php`
+
+Database configuration uses environment variables:
+- `DB_CONNECTION`
+- `DB_HOST`
+- `DB_DATABASE`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+
+`.env.example` also defines `DB_PORT`, but the current Kernel database configuration does not pass this value to the connector. Do not assume changing `DB_PORT` currently changes the connection port without updating the Kernel configuration.
+
+## 5. Frontend Architecture and Component Responsibilities
+
+The frontend uses Vue 3 Composition API.
+
+Keep components focused on their own responsibilities. Avoid duplicating state, utility functions, API operations, or event-handling logic unnecessarily.
+
+### 5.1 DashboardView.vue
+
+Location:
+
+`src/vue/views/DashboardView.vue`
+
+Responsibilities:
+- Render the dashboard page structure.
+- Display the page header and Add Task button.
+- Control whether TodoModal is visible.
+- Keep track of the selected todo for editing.
+- Open the modal for creating or editing.
+- Close the modal.
+- Handle the modal's `saved` event.
+- Refresh TodoTable after a successful save.
+
+TodoTable is accessed through a component reference. Its `fetchTodos()` method is exposed using `defineExpose()`.
+
+DashboardView should not duplicate TodoTable's todo collection, filtering, or CRUD implementation.
+
+### 5.2 TodoTable.vue
+
+Location:
+
+`src/vue/components/TodoTable.vue`
+
+Responsibilities:
+- Own the todo collection.
+- Manage loading and error states.
+- Fetch todos from the API.
+- Manage search and filtering.
+- Calculate todo counts.
+- Handle completion toggling.
+- Handle deletion.
+- Emit create and edit events to the parent.
+- Expose `fetchTodos()` for the parent component.
+
+TodoTable is responsible for coordinating the todo list and its related operations.
+
+Do not move modal form submission or modal-specific form state into TodoTable.
+
+### 5.3 TodoModal.vue
+
+Location:
+
+`src/vue/components/TodoModal.vue`
+
+Responsibilities:
+- Display the create/edit form.
+- Manage form input state.
+- Manage form validation.
+- Manage the saving state.
+- Call the appropriate create or update service.
+- Emit `close` when the modal should close.
+- Emit `saved` after a successful operation.
+
+The modal owns its form submission and editing logic.
+
+Do not put modal form state or save/update implementation in DashboardView.
+
+### 5.4 TodoList.vue
+
+Location:
+
+`src/vue/components/TodoList.vue`
+
+Responsibilities:
+- Render loading states.
+- Render empty states.
+- Render the todo item list.
+- Pass todo data to TodoItem.
+- Forward relevant events to TodoTable.
+
+TodoList should focus on list presentation and event forwarding.
+
+### 5.5 TodoItem.vue
+
+Location:
+
+`src/vue/components/TodoItem.vue`
+
+Responsibilities:
+- Display an individual todo.
+- Display its completion state.
+- Emit events for completion toggling.
+- Emit events for editing.
+- Emit events for deletion.
+
+Use the shared `isCompleted()` utility instead of implementing duplicate completion checks.
+
+### 5.6 TodoToolbar.vue
+
+Location:
+
+`src/vue/components/TodoToolbar.vue`
+
+Responsibilities:
+- Display the search input.
+- Display the filter controls.
+- Receive search and filter values through props.
+- Emit `update:search` and `update:filter` events.
+
+Keep filtering and todo collection management in TodoTable.
+
+### 5.7 TodoStats.vue
+
+Location:
+
+`src/vue/components/TodoStats.vue`
+
+Responsibilities:
+- Display todo statistics.
+- Show total, active, and completed counts.
+
+This component should remain presentational. Calculate the values in the parent and pass them through props.
+
+## 6. Frontend Utilities and API Services
+
+### 6.1 Shared Todo Utilities
+
+Location:
+
+`src/vue/utils/todoUtils.js`
+
+Shared utility functions should be implemented here when they are needed by multiple components.
+
+The current `isCompleted(todo)` function recognizes:
+- `true`
+- `1`
+- `"1"`
+
+Import this function wherever completion-state checking is required.
+
+Avoid duplicating the same logic in multiple components.
+
+### 6.2 API Client
+
+Location:
+
+`src/vue/services/apiClient.js`
+
+The API client uses native `fetch()`.
+
+Its response format is:
+
+```javascript
+{
+  ok: true,
+  status: 200,
+  data: {}
+}
+```
+
+Important:
+- `ok` indicates whether the HTTP request succeeded.
+- `status` contains the HTTP status code.
+- `data` contains the parsed JSON response or `null`.
+
+Do not assume Axios response conventions.
+
+Use:
+
+```javascript
+if (!response.ok) {
+  // Handle the error.
+}
+```
+
+For API error messages, use:
+
+```javascript
+response.data?.message
+```
+
+The client handles JSON parsing, including empty or invalid JSON responses.
+
+### 6.3 Todo Service
+
+Location:
+
+`src/vue/services/todoService.js`
+
+All todo API endpoint operations should be centralized here.
+
+Current operations:
+- `getTodos()`
+- `getTodoById(id)`
+- `createTodo(data)`
+- `updateTodo(id, data)`
+- `deleteTodo(id)`
+
+Components should call these service functions rather than duplicating endpoint URLs and Fetch API implementations.
+
+## 7. Environment, PHP Page, and Vite
+
+### 7.1 Environment Variables
+
+The example environment file is:
+
+`.env.example`
+
+Current variables include:
 
 ```env
-APP_ENV=production
+APP_ENV=development
 
 VITE_PORT=5173
-SERVER_URL=http://localhost
+SERVER_URL=
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=todo
-DB_USERNAME=root
-DB_PASSWORD=password
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
 ```
 
-Variable guidance:
+Never commit real database credentials or secrets.
 
-- `APP_ENV`: Application environment, currently set to `production`.
-- `VITE_PORT`: Vite development-server port.
-- `SERVER_URL`: Base URL for the application server.
-- `DB_CONNECTION`: Selected IchiORM connection name; currently `mysql`.
-- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`: MySQL connection settings.
+### 7.2 Page Rendering
 
-Important rules:
+The PHP page is:
 
-- Never commit `.env`.
-- Never expose real database credentials or copy production secrets into documentation, examples, logs, or source code.
-- Treat values shown in `.env.example` as placeholders, not real credentials.
-- Update `.env.example` whenever required environment variables are added, removed, or renamed.
-- Do not hardcode environment-specific values in application code.
-- Preserve the existing IchiORM connection setup and inspect the installed IchiORM API before changing it.
-- Check that each environment variable is actually read by the application before relying on it.
-- The current `app/Kernel.php` reads `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`, then selects the connection using `DB_CONNECTION`. It does not currently pass `DB_PORT` to `createConnection()`. Do not claim that a non-default port is supported until this is updated and verified.
-- Do not assume that `APP_ENV`, `VITE_PORT`, or `SERVER_URL` affect runtime behavior until their usage is confirmed in the application or build configuration.
+`resources/views/index.php`
 
-Use `composer.lock` to understand the currently installed dependency versions.
+In development:
+- Load the Vite client.
+- Load `src/vue/main.js` through the Vite development server.
 
-Do not update dependencies unnecessarily.
+In production:
+- Load `/vue/main.css`.
+- Load `/vue/app.js`.
 
-## 7. Security Requirements
+The application entry point is:
 
-Security must be considered when implementing every feature.
+`src/vue/main.js`
 
-- Validate user input before processing it.
-- Use IchiValidation for input validation where appropriate.
-- Use parameterized database operations through IchiORM.
-- Never concatenate untrusted input into SQL statements.
-- Escape untrusted values when rendering HTML.
-- Protect state-changing operations against CSRF where applicable.
-- Apply authentication and authorization before exposing protected operations.
-- Do not expose database credentials, internal exceptions, or sensitive application information in API responses.
-- Do not trust client-provided identifiers or completion status without validating them.
+The Vue application mounts to:
 
-When adding new endpoints, consider HTTP methods, input validation, response status codes, and error handling.
+`#vue-app`
 
-## 8. API Development Guidelines
+### 7.3 PageController
 
-Keep the API consistent.
+`app/Controllers/PageController.php` determines whether to use the Vite development server.
 
-- Use appropriate HTTP methods.
-- Use predictable JSON response structures.
-- Validate route parameters and request data.
-- Handle missing records explicitly.
-- Avoid exposing unnecessary database fields.
-- Keep controller methods readable.
-- Do not silently change existing API response formats.
+Development mode uses `APP_ENV=development` and obtains the Vite server URL from the configured server URL and port, with a localhost fallback.
 
-When adding or modifying endpoints, inspect the current IchiRoute and IchiORM APIs rather than assuming Laravel or other framework conventions.
+### 7.4 Vite Configuration
 
-## 9. Testing and Verification
+Configuration:
 
-The repository currently does not define a test suite or Composer development testing scripts.
+`vite.config.js`
 
-Do not claim that tests passed if they were not executed.
+Current conventions:
+- Vue plugin.
+- `@` alias points to `src/vue`.
+- `publicDir: false`.
+- Development server listens on `0.0.0.0`.
+- Development port is `5173`.
+- `strictPort: true`.
+- HMR uses `localhost:5173`.
+- Production output directory is `public/vue`.
+- JavaScript entry output is `app.js`.
+- CSS output is `main.css`.
 
-For every change:
+The Vite configuration currently uses port `5173` directly. Do not assume `VITE_PORT` in `.env.example` automatically changes the Vite server port.
 
-1. Inspect the relevant existing implementation.
-2. Check PHP syntax for modified PHP files.
-3. Verify the relevant route or application behavior where possible.
-4. Verify database-dependent behavior against an available database.
-5. Report any checks that could not be performed.
+### 7.5 NPM Scripts
 
-Use PHP syntax checking:
+Use the scripts defined in `package.json`:
+
+```bash
+npm run dev
+npm run build
+```
+
+Do not introduce alternative build commands without a reason.
+
+## 8. Security and Data Handling
+
+- Validate all incoming API data on the backend.
+- Do not trust frontend validation.
+- Do not expose database credentials or secrets.
+- Do not commit `.env` files containing real credentials.
+- Use parameterized database operations through the existing ORM.
+- Do not concatenate untrusted input into SQL.
+- Check record existence before updating or deleting records.
+- Return appropriate HTTP status codes.
+- Avoid exposing internal exceptions, stack traces, or sensitive configuration in production responses.
+- Keep API responses consistent.
+
+## 9. Build, Testing, and Verification
+
+Before completing a change, perform the relevant checks.
+
+### Frontend
+
+Run:
+
+```bash
+npm run build
+```
+
+Check for:
+- Vue compilation errors.
+- Missing imports.
+- Incorrect component props or events.
+- Broken service imports.
+- Vite build errors.
+
+### Backend
+
+Check:
+- PHP syntax.
+- Controller and repository method signatures.
+- Route definitions.
+- Validation behavior.
+- Database operation behavior.
+- Compatibility with the supported PHP version.
+
+PHP syntax can be checked with:
 
 ```bash
 php -l path/to/file.php
 ```
 
-Do not introduce a testing framework or additional development dependencies without a clear reason.
+### Testing
 
-When tests are introduced, add regression tests for the new behavior and update the project documentation.
+Do not assume that a PHPUnit test suite or a dedicated test script exists. Inspect the current project configuration before attempting to run tests.
+
+When adding tests, follow the project's existing dependencies and conventions.
+
+Do not claim tests passed unless they were actually executed successfully.
 
 ## 10. Dependency Management
 
-Use Composer to manage dependencies.
+### PHP
 
-- Keep `composer.json` and `composer.lock` consistent.
-- Do not manually edit `composer.lock`.
-- Avoid unnecessary dependency upgrades.
-- Prefer existing Ichi packages over introducing duplicate functionality.
-- Inspect package documentation or source code when unsure about an API.
+Use Composer for PHP dependencies.
 
-Do not assume that Ichi packages have the same methods or behavior as Laravel, Symfony, or other PHP frameworks.
+Do not manually modify installed dependency files under `vendor/`.
+
+### JavaScript
+
+Use npm for frontend dependencies.
+
+Do not manually modify installed dependency files under `node_modules/`.
+
+Only add dependencies when necessary. Prefer existing project dependencies and native browser APIs when they are sufficient.
 
 ## 11. Change Management
 
-Before modifying code:
+When modifying the application:
 
-1. Inspect the existing implementation.
-2. Identify the actual root cause or requirement.
-3. Reuse existing project conventions.
-4. Make the smallest reasonable change.
-5. Avoid unrelated refactoring.
-6. Preserve existing functionality.
-7. Verify the changes.
+1. Inspect the existing implementation before making changes.
+2. Follow the current architecture and naming conventions.
+3. Keep each component or class responsible for a clear task.
+4. Avoid duplicated logic.
+5. Reuse existing services and utilities.
+6. Preserve existing functionality unless the requested change requires modifying it.
+7. Keep changes focused and avoid unrelated refactoring.
+8. Check compatibility with the project's supported PHP version.
+9. Run relevant build and syntax checks.
+10. Explain important changes and any verification limitations.
 
-Do not:
-
-- Rewrite working code without a reason.
-- Introduce unnecessary architecture.
-- Add speculative features.
-- Change public API behavior unexpectedly.
-- Remove existing functionality without explicit justification.
-- Modify unrelated files.
-
-When fixing a bug, focus on the affected functionality and its regression coverage.
+Do not introduce unnecessary abstractions or additional layers for simple operations.
 
 ## 12. Documentation
 
-Update `README.md` when changes affect:
+Keep documentation consistent with the actual implementation.
 
-- Installation.
-- Environment configuration.
-- Application setup.
-- Database requirements.
-- CLI commands.
-- API endpoints.
-- Application behavior.
+When changing:
+- API endpoints, update API documentation.
+- Environment variables, update `.env.example` and relevant setup instructions.
+- Dependencies, update the appropriate dependency files.
+- Build configuration, update development and production instructions.
+- Component responsibilities, update architecture documentation when necessary.
 
-Document actual implemented functionality. Do not document planned features as if they already exist.
+Do not document planned or hypothetical behavior as if it already exists.
 
 ## 13. Git Workflow
 
-- Use the existing `main` branch as the default integration branch.
-- Keep commits focused on one logical change.
-- Use descriptive commit messages.
-- Avoid committing generated dependencies, local environment files, or secrets.
-- Inspect the Git diff before committing.
-- Do not overwrite or discard existing user changes.
+The primary branch is:
+
+`main`
+
+Before committing:
+- Check the current branch.
+- Review modified files.
+- Avoid committing generated files or local secrets unless explicitly required.
+- Keep commits focused and descriptive.
+
+Use pull requests for changes intended to be reviewed or merged.
+
+Do not claim that changes have been pushed, committed, or merged unless the corresponding Git operation succeeded.
 
 ## 14. General Instructions for AI Agents
 
-The repository's actual source code is the source of truth.
-
 When working on this project:
 
-- Read relevant files before making assumptions.
-- Follow the existing Ichi framework architecture.
-- Prefer minimal, maintainable PHP implementations.
-- Maintain compatibility with the existing PHP version.
-- Avoid unnecessary dependencies.
-- Consider security and backward compatibility.
-- Explain important implementation decisions.
-- Clearly distinguish implemented functionality from planned functionality.
-
-The goal is to develop a clean, secure, maintainable TODO application while preserving the existing Ichi PHP framework architecture.
+- Treat the current repository implementation as the source of truth.
+- Inspect relevant files before proposing code changes.
+- Prefer complete, directly usable code when the user requests implementation.
+- Preserve existing naming conventions and architecture.
+- Keep Vue component responsibilities separated.
+- Keep API operations in service modules.
+- Keep shared utilities in the utility directory.
+- Keep database operations in the model/repository layer according to existing conventions.
+- Avoid unnecessary duplication.
+- Do not assume dependencies, scripts, tests, or features exist without checking.
+- Do not invent file contents or claim unverified behavior.
+- Explain any assumptions that materially affect the implementation.
+- Prioritize minimal, correct, maintainable changes over unnecessary complexity.
