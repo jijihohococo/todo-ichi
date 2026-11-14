@@ -157,7 +157,15 @@ Never commit your actual `.env` file or database credentials.
 
 ## Running the Application
 
+The application uses the `APP_ENV` environment variable to determine how frontend assets are loaded.
+
 ### Development Mode
+
+Set the following in `.env`:
+
+```env
+APP_ENV=development
+```
 
 You need two terminal sessions.
 
@@ -167,29 +175,78 @@ You need two terminal sessions.
 npm run dev
 ```
 
-Vite runs on:
-
-```text
-http://localhost:5173
-```
-
 **Terminal 2: Start the PHP application**
 
-From the project root, run:
+From the project root:
 
 ```bash
-php -S localhost:8000
+php -S localhost:8000 -t public
 ```
 
-This assumes the project root contains the PHP application entry point (`index.php`).
-
-Open the application in your browser:
+Open the application:
 
 ```text
 http://localhost:8000
 ```
 
-### Production Build
+In development mode, Vue is loaded directly from the Vite development server. You do not need to run `npm run build`.
+
+### Production Mode
+
+Set the following in `.env`:
+
+```env
+APP_ENV=production
+```
+
+**1. Build the frontend assets**
+
+From the project root, run:
+
+```bash
+npm run build
+```
+
+The compiled assets are generated in:
+
+```text
+public/vue/
+```
+
+The build produces:
+
+- `public/vue/app.js`
+- `public/vue/main.css`
+
+**2. Start the PHP application**
+
+Configure your PHP web server to serve the `public` directory as its document root.
+
+For a local test using PHP's built-in server:
+
+```bash
+php -S localhost:8000 -t public
+```
+
+**3. Open the application**
+
+```text
+http://localhost:8000
+```
+
+In production mode, the application loads the compiled JavaScript and CSS files from `public/vue/` instead of connecting to the Vite development server.
+
+### Development vs. Production
+
+| Configuration | Development | Production |
+|---|---|---|
+| `APP_ENV` | `development` | `production` |
+| Frontend source | Vite development server | Compiled assets |
+| `npm run dev` | Required | Not required |
+| `npm run build` | Not required | Required |
+| Asset location | Vite server | `public/vue/` |
+
+**Important:** Set `APP_ENV` before starting the PHP application. When switching to production, make sure you have run `npm run build` so the compiled assets exist.
 
 Build the frontend assets:
 
