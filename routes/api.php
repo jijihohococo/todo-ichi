@@ -10,11 +10,8 @@ function api(Route $route): void
             'middleware' => 'JiJiHoHoCoCo\IchiRoute\Middleware\APIMiddleware'
         ],
         function () {
-            $this->get('/', function () {
-                return jsonResponse([
-                    'message' => 'Hello World'
-                ]);
-            });
+            $this->get('/todos', 'App\Controllers\API\TodoController@index');
+            $this->get('/todos/{id}', 'App\Controllers\API\TodoController@show');
         }
     );
 }
