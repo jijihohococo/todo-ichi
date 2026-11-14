@@ -1,4 +1,5 @@
 /node_modules
 /vendor
+/public/vue
 .phpunit.result.cache
 .env
