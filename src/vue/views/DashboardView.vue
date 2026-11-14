@@ -1,3 +1,34 @@
+<template>
+  <main class="dashboard-view">
+    <header class="page-header">
+      <div>
+        <h1>My Tasks</h1>
+        <p>Organize your day and get things done.</p>
+      </div>
+
+      <button class="primary-button" @click="openCreateModal">
+        <span>+</span>
+        Add Task
+      </button>
+    </header>
+
+    <TodoTable
+      ref="todoTable"
+      @create="openCreateModal"
+      @edit="openEditModal"
+    />
+
+    <TodoModal
+      :show="showModal"
+      :todo="editingTodo"
+      @close="closeModal"
+      @saved="handleSaved"
+    />
+  </main>
+</template>
+
+<style src="@/styles/app.css"></style>
+
 <script setup>
 import { ref } from "vue";
 
@@ -29,34 +60,3 @@ async function handleSaved() {
   await todoTable.value?.fetchTodos();
 }
 </script>
-
-<template>
-  <main class="dashboard-view">
-    <header class="page-header">
-      <div>
-        <h1>My Tasks</h1>
-        <p>Organize your day and get things done.</p>
-      </div>
-
-      <button class="primary-button" @click="openCreateModal">
-        <span>+</span>
-        Add Task
-      </button>
-    </header>
-
-    <TodoTable
-      ref="todoTable"
-      @create="openCreateModal"
-      @edit="openEditModal"
-    />
-
-    <TodoModal
-      :show="showModal"
-      :todo="editingTodo"
-      @close="closeModal"
-      @saved="handleSaved"
-    />
-  </main>
-</template>
-
-<style src="@/styles/app.css"></style>

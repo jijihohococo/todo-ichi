@@ -1,3 +1,80 @@
+<template>
+  <div
+    v-if="show"
+    class="modal-overlay"
+    @click.self="closeModal"
+  >
+    <section
+      class="todo-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal-header">
+        <h2 id="modal-title">
+          {{ isEditing ? "Edit Task" : "Create Task" }}
+        </h2>
+
+        <button
+          class="close-button"
+          :disabled="saving"
+          @click="closeModal"
+        >
+          ×
+        </button>
+      </div>
+
+      <form @submit.prevent="saveTodo">
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
+
+        <div class="form-group">
+          <label for="todo-title">Title</label>
+          <input
+            id="todo-title"
+            v-model="form.title"
+            type="text"
+            maxlength="255"
+            placeholder="What needs to be done?"
+            required
+            autofocus
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="todo-description">Description</label>
+          <textarea
+            id="todo-description"
+            v-model="form.description"
+            rows="4"
+            placeholder="Add some details (optional)"
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="secondary-button"
+            :disabled="saving"
+            @click="closeModal"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            :disabled="saving"
+          >
+            {{ saving ? "Saving..." : "Save Task" }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</template>
+
 <script setup>
 import { ref, computed, watch } from "vue";
 
@@ -89,80 +166,3 @@ async function saveTodo() {
   }
 }
 </script>
-
-<template>
-  <div
-    v-if="show"
-    class="modal-overlay"
-    @click.self="closeModal"
-  >
-    <section
-      class="todo-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-    >
-      <div class="modal-header">
-        <h2 id="modal-title">
-          {{ isEditing ? "Edit Task" : "Create Task" }}
-        </h2>
-
-        <button
-          class="close-button"
-          :disabled="saving"
-          @click="closeModal"
-        >
-          ×
-        </button>
-      </div>
-
-      <form @submit.prevent="saveTodo">
-        <div v-if="error" class="error-message">
-          {{ error }}
-        </div>
-
-        <div class="form-group">
-          <label for="todo-title">Title</label>
-          <input
-            id="todo-title"
-            v-model="form.title"
-            type="text"
-            maxlength="255"
-            placeholder="What needs to be done?"
-            required
-            autofocus
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="todo-description">Description</label>
-          <textarea
-            id="todo-description"
-            v-model="form.description"
-            rows="4"
-            placeholder="Add some details (optional)"
-          ></textarea>
-        </div>
-
-        <div class="modal-actions">
-          <button
-            type="button"
-            class="secondary-button"
-            :disabled="saving"
-            @click="closeModal"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            class="primary-button"
-            :disabled="saving"
-          >
-            {{ saving ? "Saving..." : "Save Task" }}
-          </button>
-        </div>
-      </form>
-    </section>
-  </div>
-</template>

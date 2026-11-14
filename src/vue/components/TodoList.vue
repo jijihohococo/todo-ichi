@@ -1,28 +1,3 @@
-<script setup>
-import TodoItem from "@/components/TodoItem.vue";
-
-defineProps({
-  todos: {
-    type: Array,
-    default: () => [],
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-  search: {
-    type: String,
-    default: "",
-  },
-  filter: {
-    type: String,
-    default: "all",
-  },
-});
-
-defineEmits(["create", "toggle", "edit", "remove"]);
-</script>
-
 <template>
   <div v-if="loading" class="state-message">
     Loading tasks...
@@ -66,3 +41,28 @@ defineEmits(["create", "toggle", "edit", "remove"]);
     />
   </div>
 </template>
+
+<script setup>
+import TodoItem from "@/components/TodoItem.vue";
+
+defineProps({
+  todos: {
+    type: Array,
+    default: () => [],
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  search: {
+    type: String,
+    default: "",
+  },
+  filter: {
+    type: String,
+    default: "all",
+  },
+});
+
+defineEmits(["create", "toggle", "edit", "remove"]);
+</script>

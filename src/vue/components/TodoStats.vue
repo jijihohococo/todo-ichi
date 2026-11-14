@@ -1,20 +1,3 @@
-<script setup>
-defineProps({
-  total: {
-    type: Number,
-    default: 0,
-  },
-  active: {
-    type: Number,
-    default: 0,
-  },
-  completed: {
-    type: Number,
-    default: 0,
-  },
-});
-</script>
-
 <template>
   <section class="statistics">
     <div class="stat-card">
@@ -33,3 +16,20 @@ defineProps({
     </div>
   </section>
 </template>
+
+<script setup>
+defineProps({
+  total: {
+    type: Number,
+    default: 0,
+  },
+  active: {
+    type: Number,
+    default: 0,
+  },
+  completed: {
+    type: Number,
+    default: 0,
+  },
+});
+</script>

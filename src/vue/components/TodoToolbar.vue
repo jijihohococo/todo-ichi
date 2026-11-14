@@ -1,24 +1,3 @@
-<script setup>
-defineProps({
-  search: {
-    type: String,
-    default: "",
-  },
-  filter: {
-    type: String,
-    default: "all",
-  },
-});
-
-defineEmits(["update:search", "update:filter"]);
-
-const filters = [
-  { value: "all", label: "All" },
-  { value: "active", label: "Active" },
-  { value: "completed", label: "Completed" },
-];
-</script>
-
 <template>
   <div class="toolbar">
     <input
@@ -41,3 +20,24 @@ const filters = [
     </div>
   </div>
 </template>
+
+<script setup>
+defineProps({
+  search: {
+    type: String,
+    default: "",
+  },
+  filter: {
+    type: String,
+    default: "all",
+  },
+});
+
+defineEmits(["update:search", "update:filter"]);
+
+const filters = [
+  { value: "all", label: "All" },
+  { value: "active", label: "Active" },
+  { value: "completed", label: "Completed" },
+];
+</script>

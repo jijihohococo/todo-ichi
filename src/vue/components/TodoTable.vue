@@ -1,3 +1,36 @@
+<template>
+  <section class="todo-table">
+    <TodoStats
+      :total="todos.length"
+      :active="activeCount"
+      :completed="completedCount"
+    />
+
+    <div v-if="error" class="error-message">
+      {{ error }}
+      <button @click="clearError">×</button>
+    </div>
+
+    <section class="todo-section">
+      <TodoToolbar
+        v-model:search="search"
+        v-model:filter="filter"
+      />
+
+      <TodoList
+        :todos="filteredTodos"
+        :loading="loading"
+        :search="search"
+        :filter="filter"
+        @create="emit('create')"
+        @toggle="toggleTodo"
+        @edit="emit('edit', $event)"
+        @remove="removeTodo"
+      />
+    </section>
+  </section>
+</template>
+
 <script setup>
 import { ref, computed, onMounted } from "vue";
 
@@ -141,36 +174,3 @@ defineExpose({
   fetchTodos,
 });
 </script>
-
-<template>
-  <section class="todo-table">
-    <TodoStats
-      :total="todos.length"
-      :active="activeCount"
-      :completed="completedCount"
-    />
-
-    <div v-if="error" class="error-message">
-      {{ error }}
-      <button @click="clearError">×</button>
-    </div>
-
-    <section class="todo-section">
-      <TodoToolbar
-        v-model:search="search"
-        v-model:filter="filter"
-      />
-
-      <TodoList
-        :todos="filteredTodos"
-        :loading="loading"
-        :search="search"
-        :filter="filter"
-        @create="emit('create')"
-        @toggle="toggleTodo"
-        @edit="emit('edit', $event)"
-        @remove="removeTodo"
-      />
-    </section>
-  </section>
-</template>
