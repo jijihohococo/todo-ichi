@@ -1,27 +1,27 @@
 {
 	"name": "jijihohococo/ichi",
 	"type": "project",
-   "description": "Ichi PHP MVC Framework",
-   "keywords": [
-   	"ichi",
-   	"framework",
-   	"php-framework"
-   ],
-   "license": "MIT",
-   "authors": [
+	"description": "Ichi PHP MVC Framework",
+	"keywords": [
+		"ichi",
+		"framework",
+		"php-framework"
+	],
+	"license": "MIT",
+	"authors": [
 		{
 			"name": "Lin Aung",
 			"email": "jijihohococo@gmail.com"
 		}
 	],
 	"autoload": {
-        "psr-4": {
-            "App\\": "app/"
-        },
-         "files": [
-            "app/helpers.php"
-        ]
-    },
+		"psr-4": {
+			"App\\": "app/"
+		},
+		"files": [
+			"app/helpers.php"
+		]
+	},
 	"require": {
 		"jijihohococo/ichi-route": "^2.0",
 		"jijihohococo/ichi-template": "^2.4",
