@@ -16,6 +16,9 @@ class TodoController extends BaseController
         $this->todo = $todo;
     }
 
+    /**
+     * GET /api/todos
+     */
     public function index()
     {
         return jsonResponse([
@@ -23,6 +26,9 @@ class TodoController extends BaseController
         ]);
     }
 
+    /**
+     * GET /api/todos/{id}
+     */
     public function show($id)
     {
         return jsonResponse([
@@ -30,6 +36,9 @@ class TodoController extends BaseController
         ]);
     }
 
+    /**
+     * POST /api/todos
+     */
     public function create()
     {
         $requestData = request();
@@ -49,6 +58,9 @@ class TodoController extends BaseController
         ]);
     }
 
+    /**
+     * PUT /api/todos/{id}
+     */
     public function update($id)
     {
         $requestData = request();
@@ -63,6 +75,9 @@ class TodoController extends BaseController
         return $this->todo->update($id, $requestData);
     }
 
+    /**
+     * DELETE /api/todos/{id}
+     */
     public function delete($id)
     {
         return $this->todo->delete($id);

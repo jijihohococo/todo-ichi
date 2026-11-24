@@ -6,6 +6,9 @@ use JiJiHoHoCoCo\IchiRoute\Controller\BaseController;
 
 class PageController extends BaseController
 {
+    /**
+     * GET /
+     */
     public function index()
     {
         $isDevelopment = gete('APP_ENV') === 'development';
